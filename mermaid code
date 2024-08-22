@@ -1,0 +1,90 @@
+classDiagram
+    direction BT
+    class Critter {
+        #int x
+        #int y
+        #int age
+        +Critter(int x, int y)
+        +virtual ~Critter()
+        +virtual void move(Grid& grid) = 0
+        +virtual void breed(Grid& grid) = 0
+        +virtual void starve(Grid& grid) = 0
+        +virtual void draw() = 0
+    }
+
+    class Doodlebug {
+        -int moves_since_meal
+        +Doodlebug(int x, int y)
+        +void move(Grid& grid)
+        +bool moveToAdjacentAnt(Grid& grid, int& new_x_posn, int& new_y_posn)
+        +void calcDirection(int direction, int& new_x_posn, int& new_y_posn)
+        +bool isValidPosition(const Grid& grid, int new_x_posn, int new_y_posn)
+        +void moveToPosition(Grid& grid, int new_x_posn, int new_y_posn)
+        +void bounceOffWall(Grid& grid, int& new_x_posn, int& new_y_posn)
+        +void breed(Grid& grid)
+        +void spawnOffspring(Grid& grid)
+        +void starve(Grid& grid)
+        +void draw()
+    }
+
+    class Ant {
+        +enum ant_type male, female
+        +ant_type type
+        -int stepsWithoutMoving
+        +Ant(int x, int y, ant_type type)
+        +void move(Grid& grid)
+        +void calcDirection(int direction, int& newX, int& newY)
+        +bool isValidPosition(const Grid& grid, int newX, int newY)
+        +void moveToPosition(Grid& grid, int newX, int newY)
+        +void bounceOffWall(Grid& grid, int& newX, int& newY)
+        +void breed(Grid& grid)
+        +void starve(Grid& grid)
+        +void draw()
+    }
+
+    class Queen {
+        -int moves_since_mating
+        +Queen(int x, int y)
+        +void move(Grid& grid)
+        +void breed(Grid& grid)
+        +void calcDirection(int direction, int& newX, int& newY)
+        +bool isValidPosition(const Grid& grid, int newX, int newY)
+        +void moveToPosition(Grid& grid, int newX, int newY)
+        +void bounceOffWall(Grid& grid, int& newX, int& newY)
+        +void spawnOffspring(Grid& grid)
+        +void starve(Grid& grid)
+        +void draw()
+    }
+
+    class Grid {
+        -int width
+        -int height
+        -vector<vector<Critter*>> cells
+        +Grid(int dimension)
+        +~Grid()
+        +int getDimension() const
+        +void setCell(int x, int y, Critter* critter)
+        +Critter* getCell(int x, int y) const
+        +void placeCritters(int numDoodlebugs, int numMaleAnts, int numFemaleAnts, int numQueens)
+        +void update()
+        +void draw()
+        +void breedStarve()
+        +template <typename CreateCritterFn> void placeCrittersOfType(int count, CreateCritterFn createCritter)
+        +template <typename CritterType> void updateCritters()
+        +template <typename CritterType> bool hasCritters() const
+    }
+
+    class Simulation {
+        -int gridSize
+        -vector<vector<unique_ptr<Critter>>> grid
+        +Simulation(int size, int numDoodlebugs, int numQueens, int numMaleAnts, int numFemaleAnts)
+        +void run()
+        +void update()
+        +void draw()
+        +bool hasAnts()
+        +bool hasDoodlebugs()
+    }
+
+    Critter <|-- Doodlebug
+    Critter <|-- Ant
+    Critter <|-- Queen
